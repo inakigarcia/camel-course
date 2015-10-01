@@ -28,4 +28,16 @@
   <name>Camel Course :: Enterprise Integration Pattern Excercises</name>
   <url>http://www.anova.be</url>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-maven-plugin</artifactId>
+        <configuration>
+          <applicationContextUri>context.xml</applicationContextUri>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
 </project>

@@ -60,4 +60,16 @@
     </dependency>
   </dependencies>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-maven-plugin</artifactId>
+        <configuration>
+          <applicationContextUri>context.xml</applicationContextUri>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
 </project>
