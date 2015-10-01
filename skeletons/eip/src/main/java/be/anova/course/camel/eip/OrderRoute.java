@@ -38,6 +38,12 @@ public class OrderRoute extends RouteBuilder {
                 .choice().when().xpath("//order/articles/article/quantity='0'")
                 .to("log:empty-orders")
                 .otherwise().to("direct:order");
+/*
+        from("direct:order")
+                .setHeader("externalid", xpath("/order/@externalid"))
+                .setHeader("country", xpath("/order/customer/@country"))
+                .setHeader(Exchange.FILE_NAME, simpleExpression("${header.country}/${header.externalid}.xml"))
+                .to("file:target/orders");*/
 
         from("direct:order")
                 .setHeader("externalid",xpath("/order/@externalid"))
