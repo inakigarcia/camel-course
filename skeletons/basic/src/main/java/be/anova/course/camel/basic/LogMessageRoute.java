@@ -33,6 +33,12 @@ public class LogMessageRoute extends RouteBuilder {
         //TODO: implement your Camel routes here if you choose the Java DSL
         //      - timer: -> processor (add timetamp) -> log:
         //      - file: -> processor (write to log) --> file:
+        from("timer://test?fixedRate=true&period=5000")
+                .process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getIn().setBody(DATE_FORMAT.format(new Date()));
+                    }
+                }).to("log:test");
 
     }
 

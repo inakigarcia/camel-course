@@ -30,7 +30,7 @@
   <url>http://www.anova.be</url>
 
   <properties>
-    <camel-version>2.2.0</camel-version>
+    <camel-version>2.10.0</camel-version>
     <log4j-version>1.2.14</log4j-version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>  
@@ -54,6 +54,13 @@
           <target>1.5</target>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-maven-plugin</artifactId>
+        <configuration>
+          <applicationContextUri>context.xml</applicationContextUri>
+        </configuration>
+      </plugin>
     </plugins>
 
   </build>
@@ -69,6 +76,12 @@
       <artifactId>camel-spring</artifactId>
       <version>${camel-version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-maven-plugin</artifactId>
+      <version>${camel-version}</version>
+    </dependency>
+
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
