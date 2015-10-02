@@ -32,12 +32,26 @@ public class OrderRoute extends RouteBuilder {
                 .to("direct:orders");
 
         from("direct:orders").split().xpath("//orders/order")
-                .convertBodyTo(String.class).to("direct:qty").to("log:order");
+                .convertBodyTo(String.class)
+                .to("direct:qty")
+                .to("log:order");
 
         from("direct:qty")
                 .choice().when().xpath("//order/articles/article/quantity='0'")
-                .to("log:empty-orders")
-                .otherwise().to("direct:order");
+                    .to("log:empty-orders")
+                .otherwise()
+                    .to("direct:order");
+
+        /*ORIGINAL*/
+        from("direct:order")
+                .setHeader("externalid",xpath("/order/@externalid"))
+                .setHeader(Exchange.FILE_NAME,simpleExpression("${header.externalid}.xml"))
+                .choice().when().xpath("//order/customer/@country='Scotland'")
+                    .to("file:target/orders/Scotland")
+                .when().xpath("//order/customer/@country='Belgium'")
+                    .to("file:target/orders/Belgium")
+                .otherwise()
+                    .to("file:target/orders/Other");
 /*
         from("direct:order")
                 .setHeader("externalid", xpath("/order/@externalid"))
@@ -45,14 +59,15 @@ public class OrderRoute extends RouteBuilder {
                 .setHeader(Exchange.FILE_NAME, simpleExpression("${header.country}/${header.externalid}.xml"))
                 .to("file:target/orders");*/
 
-        from("direct:order")
-                .setHeader("externalid",xpath("/order/@externalid"))
-                .setHeader(Exchange.FILE_NAME,simpleExpression("${header.externalid}.xml"))
-                .choice().when().xpath("//order/customer/@country='Scotland'")
-                .to("file:target/orders/Scotland")
-                .when().xpath("//order/customer/@country='Belgium'")
-                .to("file:target/orders/Belgium")
-                .otherwise().to("file:target/orders/Other");
+        /*Falta saber cuando no esta presente country*/
+        /*from("direct:order")
+                .setHeader("externalid", xpath("/order/@externalid"))
+                .setHeader("country", xpath("/order/customer/@country"))
+                .setHeader(Exchange.FILE_NAME, simpleExpression("${header.externalid}.xml"))
+                .choice().when().xpath("//order/customer/@country='' or //order/customer/@country=null")
+                    .to("file:target/orders/Other")
+                .otherwise().setHeader(Exchange.FILE_NAME, simpleExpression("${header.country}/${header.externalid}.xml"))
+                .   to("file:target/orders");*/
     }
 
 }
