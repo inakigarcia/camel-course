@@ -27,6 +27,7 @@ limitations under the License.
     <!-- TODO: implement your Camel routes here if you prefer the Spring DSL -->
   </camel:camelContext>
 
-  <!-- TODO: add a bean for the OrderService -->  
+  <!-- TODO: add a bean for the OrderService -->
+    <bean id="orderService" class="be.anova.course.camel.beans.OrderService" />
 
 </beans>

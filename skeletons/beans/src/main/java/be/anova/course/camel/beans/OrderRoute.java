@@ -22,6 +22,18 @@ public class OrderRoute extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         //TODO: implement your Camel routes here if you prefer the Java DSL
+        /*
+        Wire the OrderService into your route
+        3 methods
+            – enrich() use Exchange as parameter and add timestamp header to the exchange
+            – process() uses annotations to get parameter and message body
+            – log() method uses @Consume to read from the direct:log endpoint
+         */
+        from("file:src/main/resources/orders?noop=true")
+                .to("file:target/audit")
+                .beanRef("orderService", "enrich")
+                .beanRef("orderService","process")
+                .to("direct:order");
     }
 
 }

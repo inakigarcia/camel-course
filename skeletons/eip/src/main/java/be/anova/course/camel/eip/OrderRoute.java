@@ -15,6 +15,7 @@
  */
 package be.anova.course.camel.eip;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.xml.Namespaces;
@@ -27,12 +28,14 @@ public class OrderRoute extends RouteBuilder {
     @Override
     public void configure() throws Exception {
 
-        from("file:src/main/resources/orders?noop=true")
+        Endpoint orderFile = endpoint("file:src/main/resources/orders?noop=true");
+
+        from(orderFile)
                 .wireTap("file:target/orders/audit")
                 .to("direct:orders");
 
-        from("direct:orders").split().xpath("//orders/order")
-                .convertBodyTo(String.class)
+        from("direct:orders")
+                .split().xpath("//orders/order").convertBodyTo(String.class)
                 .to("direct:qty")
                 .to("log:order");
 
@@ -67,7 +70,7 @@ public class OrderRoute extends RouteBuilder {
                 .choice().when().xpath("//order/customer/@country='' or //order/customer/@country=null")
                     .to("file:target/orders/Other")
                 .otherwise().setHeader(Exchange.FILE_NAME, simpleExpression("${header.country}/${header.externalid}.xml"))
-                .   to("file:target/orders");*/
+                    .to("file:target/orders");*/
     }
 
 }

@@ -32,18 +32,23 @@ public class OrderService {
 
     public void enrich(Exchange exchange) {
         //TODO: add a timestamp header to the exchange
+        exchange.getIn().setHeader("timestamp", DATE_FORMAT.format(new Date()));
+        System.out.printf("Setting timestamp in header %s: \n", exchange.getIn().getHeader("timestamp"));
     }
 
     // TODO: add annotations to use the timestamp header you added before and the message body
-    public void process(String timestamp, String body) {
+    public void process(@Header("timestamp") String timestamp, @Body String body) {
         //TODO: show body and timestamp in the console
+        System.out.printf("Timestamp: %s \nBody: %s \n", timestamp, body);
     }
 
     // TODO: add annotations
     //       - to consume from the direct:order endpoint
     //       - to access the file (using simple expresssion) and customer name (using xpath)
-    public void log(String name, String customer) {
+    @Consume(uri = "direct:order")
+    public void log(@Simple("${file:name}") String name, @XPath("order/customer/@name") String customer) {
         // TODO: show file and customer name in the console
+        System.out.printf("Handling order: %s for customer %s", name, customer);
     }
 
 }

@@ -27,6 +27,25 @@ public class MailMessageRoute extends RouteBuilder {
 	@Override
 	public void configure() throws Exception {
         //TODO: implement your Camel routes here if you prefer the Java DSL
+		/*
+		Build a set of camel routes to
+		Generate a message every 30 seconds
+		Write the message to a file
+		Read the file and it to the JMS queue
+		Read the message from the JMS queue and convert it to a nice HTML mail
+		*/
+
+		from("timer:per-second?period=30000").process(new HtmlTextGeneratorProcessor())
+				.to("file:target/data/mail-out");
+
+		from("file:target/data/mail-out")
+				.to("jms:queue:msgsout");
+
+		from("jms:queue:msgsout")
+				.setHeader("timestamp").simple("${date:now:yyyyMMdd.hhss}").convertBodyTo(String.class)
+				.to("xslt:transform.xsl").process(new HtmlEmailGeneratorProcessor())
+				.to("log:test")
+				.to("smtps:smtp.gmail.com?password=test1975&username=test.anova.rd@gmail.com");
 	}
 
 }
